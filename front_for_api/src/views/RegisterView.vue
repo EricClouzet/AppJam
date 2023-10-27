@@ -38,6 +38,7 @@ export default {
           email: form.value.email,
           password: form.value.password
         });
+        
         console.log("email : ", form.value.email);
         console.log("password : ", form.value.password);
         console.log('register successful');
