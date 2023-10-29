@@ -15,41 +15,25 @@ use Symfony\Component\Routing\Annotation\Route;
 class SearchController extends AbstractController
 {
     
-    #[Route('/api-search/{val}', name: 'api-search')]
-    public function searchAPI(ProductRepository $productRepository, string $val): Response
+    #[Route('/search/{name}', name: 'search', methods: ['GET'])]
+    public function search(ProductRepository $productRepository, string $name): JsonResponse
     {
-        $products = $productRepository->findAllLike($val);
-       
-        // $productsNames = array_map(function($p){
-        //     return $p->getName();
-        // },$products);
+        $products = $productRepository->findAllLike($name);
 
-        $productsNames=[];
-        foreach($products as $product){
-            $productsNames[] = $product->getName();
+        $productData = [];
+
+        foreach ($products as $product) {
+            // Ajoutez les données du produit que vous souhaitez exposer dans la réponse JSON
+            $productData[] = [
+                'id' => $product->getId(),
+                'name' => $product->getName(),
+                'description' => $product->getDescription(),
+                'price' => $product->getPrice(),
+                'image' => $product->getImage(),
+            ];
         }
-        return $this->json($productsNames);
-    }
 
-    
-    #[Route('/search', name: 'search')]
-    public function search(ProductRepository $productRepository, Request $request): Response
-    {
-        $val=$request->query->get("search");
-        $products = $productRepository->findAllLike($val);
-       
-        return $this->render('search/index.html.twig', [
-            "products" => $products
-        ]);
+        return $this->json(['products' => $productData]);
     }
-
   
-    
 }
-
-
-
-
-
-
-
